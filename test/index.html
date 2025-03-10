@@ -9,6 +9,7 @@
 
     <div>
       <button id="merge">Merge</button>
+      <button id="subtract">Subtract</button>
     </div>
 
     <script type="module">
@@ -26,6 +27,10 @@
 
         document.getElementById('merge').addEventListener('click', () => {
           plugin.merge();
+        });
+
+        document.getElementById('subtract').addEventListener('click', () => {
+          plugin.subtract();
         });
       }
     </script>

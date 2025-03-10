@@ -24,5 +24,6 @@ export const rectToPolygon = (rect: RectangleGeometry): [number, number][][] => 
   [rect.x, rect.y],
   [rect.x + rect.w, rect.y],
   [rect.x + rect.w, rect.y + rect.h],
-  [rect.x, rect.y + rect.h]
+  [rect.x, rect.y + rect.h],
+  [rect.x, rect.y]
 ]])
