@@ -1,0 +1,46 @@
+{
+  "name": "@annotorious/plugin-boolean-operations",
+  "version": "0.1.0",
+  "description": "Adds functionality to merge and subtract annotation shapes",
+  "author": "Rainer Simon",
+  "license": "BSD-3-Clause",
+  "homepage": "https://github.com/annotorious/plugin-boolean-operations",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/annotorious/plugin-boolean-operations.git"
+  },
+  "bugs": {
+    "url": "https://github.com/annotorious/plugin-boolean-operations/issues"
+  },
+  "scripts": {
+    "start": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "module": "./dist/annotorious-plugin-boolean-ops.es.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "typescript": "^5.8.2",
+    "vite": "^6.2.1",
+    "vite-plugin-dts": "^4.5.3"
+  },
+  "peerDependencies": {
+    "@annotorious/annotorious": "^3.1.4"
+  },
+  "dependencies": {
+    "polyclip-ts": "^0.16.8",
+    "simplify-js": "^1.2.4",
+    "uuid": "^11.1.0"
+  }
+}

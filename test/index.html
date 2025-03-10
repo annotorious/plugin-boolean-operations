@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Annotorious Boolean Operations</title>
+  </head>
+  <body>
+    <img id="sample-image" src="example.jpg" />
+
+    <div>
+      <button id="merge">Merge</button>
+    </div>
+
+    <script type="module">
+      import { createImageAnnotator } from '@annotorious/annotorious';
+      import { mountPlugin } from '../src';
+
+      import '@annotorious/annotorious/annotorious.css';
+
+      let state = 'Start';
+
+      window.onload = () => {
+        const anno = createImageAnnotator(document.getElementById('sample-image'));
+
+        const plugin = mountPlugin(anno);
+
+        document.getElementById('merge').addEventListener('click', () => {
+          plugin.merge();
+        });
+      }
+    </script>
+  </body>
+</html>
