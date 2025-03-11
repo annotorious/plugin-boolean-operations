@@ -1,7 +1,9 @@
+import type { Geom } from 'polyclip-ts';
 import { ShapeType } from '@annotorious/annotorious';
 import type { 
   EllipseGeometry, 
   ImageAnnotation, 
+  MultiPolygonGeometry, 
   PolygonGeometry, 
   RectangleGeometry 
 } from '@annotorious/annotorious';
@@ -23,7 +25,7 @@ const ellipseToPolygon = (
     points.push([x, y]);
   }
   
-  return [points];
+  return [[...points, points[0]]];
 }
 
 const rectToPolygon = (
@@ -36,13 +38,23 @@ const rectToPolygon = (
   [rect.x, rect.y]
 ]]);
 
-export const toPolyclip = (annotation: ImageAnnotation) => {
+const multiPolygonToPolygon = (
+  multi: MultiPolygonGeometry
+): [number, number][][][] =>
+  multi.polygons.map(element => 
+    element.rings.map(ring => ring.points)
+  );
+
+/** Returns a polyclip polygon or multipolygon **/
+export const toPolyclip = (annotation: ImageAnnotation): Geom => {
   const { selector } = annotation.target;
-  if (selector.type === ShapeType.POLYGON) {
-    return [(selector.geometry as PolygonGeometry).points as [number, number][]];
-  } else if (selector.type === ShapeType.RECTANGLE) {
+  if (selector.type === ShapeType.RECTANGLE) {
     return rectToPolygon(selector.geometry as RectangleGeometry);
+  } else if (selector.type === ShapeType.POLYGON) {
+    return [(selector.geometry as PolygonGeometry).points as [number, number][]];
   } else if (selector.type === ShapeType.ELLIPSE) {
     return ellipseToPolygon(selector.geometry as EllipseGeometry);
+  } else if (selector.type === ShapeType.MULTIPOLYGLON) {
+    return multiPolygonToPolygon(selector.geometry as MultiPolygonGeometry);
   }
 }

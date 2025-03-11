@@ -1,5 +1,5 @@
 import * as polyclip from 'polyclip-ts';
-import { v4 as uuidv4 } from 'uuid';
+import type { Geom } from 'polyclip-ts';
 import { toPolyclip, toSelector } from './utils';
 import type { 
   ImageAnnotation, 
@@ -12,7 +12,7 @@ export const mountPlugin = (anno: ImageAnnotator) => {
   const merge = () => {
     const all = anno.getAnnotations();
 
-    const input: [number, number][][][] = all.map(toPolyclip);
+    const input = all.map(toPolyclip) as Geom;
     const merged = polyclip.union(input);
     const selector = toSelector(merged);
 
@@ -25,8 +25,6 @@ export const mountPlugin = (anno: ImageAnnotator) => {
         selector
       }
     } as ImageAnnotation;
-
-    console.log('adding', annotation);
 
     anno.addAnnotation(annotation);
   }
@@ -47,8 +45,6 @@ export const mountPlugin = (anno: ImageAnnotator) => {
         selector
       }
     } as ImageAnnotation;
-
-    console.log('adding', annotation);
 
     anno.addAnnotation(annotation);
   }

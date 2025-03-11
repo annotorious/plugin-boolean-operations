@@ -1,7 +1,8 @@
+import _simplify from 'simplify-js';
 import { boundsFromPoints, ShapeType, type MultiPolygon, type Polygon } from '@annotorious/annotorious';
 
 /** Tests if the given MultiPolygon is actually a simple **/
-const isSimplePolygon = (polygon: MultiPolygon) =>
+export const isSimplePolygon = (polygon: MultiPolygon) =>
   polygon.geometry.polygons.length === 1 && polygon.geometry.polygons[0].rings.length === 1;
 
 export const toSimplePolygon = (polygon: MultiPolygon): Polygon | MultiPolygon => {
@@ -20,6 +21,9 @@ export const toSimplePolygon = (polygon: MultiPolygon): Polygon | MultiPolygon =
   }
 }
 
+const simplify = (points: [number, number][], tolerance = 0.5, highQuality = true): [number, number][] =>
+  _simplify(points.map(([x,y]) => ({ x, y })), tolerance, highQuality).map(({x, y}) => ([x, y]));
+
 export const toSelector = (multipoly: [number, number][][][]) => {
   // For each multipoly element, get the points from the first (=outer) ring
   const outerPoints = multipoly.reduce<[number, number][]>((points, element) => {
@@ -30,7 +34,8 @@ export const toSelector = (multipoly: [number, number][][][]) => {
     type: ShapeType.MULTIPOLYGLON,
     geometry: {
       polygons: multipoly.map(polygon => ({
-        rings: polygon.map(points => ({ points })),   
+        // Note that polyclip-ts always duplicates the starting point–remove
+        rings: polygon.map(points => ({ points: simplify(points.slice(0, -1)) })),   
         // Outer ring bounds           
         bounds: boundsFromPoints(polygon[0])
       })),
