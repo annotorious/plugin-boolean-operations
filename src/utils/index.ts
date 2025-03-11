@@ -1,1 +1,2 @@
-export * from './to-polygon';
+export * from './to-polyclip';
+export * from './to-selector';
