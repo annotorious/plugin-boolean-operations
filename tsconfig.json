@@ -1,20 +1,19 @@
 {
   "compilerOptions": {
     "allowJs": true,
-    "allowSyntheticDefaultImports": true,
     "baseUrl": ".",
-    "declaration": true,
+    "checkJs": true,
+    "composite": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
-    "isolatedModules": false,
+    "ignoreDeprecations": "5.0",
+    "incremental": true,
+    "isolatedModules": true,
     "module": "ESNext",
-    "moduleResolution": "bundler",
+    "moduleResolution": "Node",
     "outDir": "./dist",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "resolveJsonModule": true,
-    "skipLibCheck": true,
+    "skipLibCheck": false,
     "sourceMap": true,
     "target": "ESNext",
     "verbatimModuleSyntax": true

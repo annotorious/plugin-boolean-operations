@@ -18,7 +18,7 @@
     "build": "vite build",
     "preview": "vite preview"
   },
-  "module": "./dist/annotorious-plugin-boolean-ops.es.js",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist"

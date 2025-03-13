@@ -15,7 +15,9 @@ export default defineConfig({
   build: {
     sourcemap: true,
     lib: {
-      formats: ['es']
+      entry: './src/index.ts',
+      formats: ['es'],
+      fileName: 'index'
     }
   }
 });
