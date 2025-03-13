@@ -1,32 +1,111 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8" />
-    <title>Annotorious Boolean Operations</title>
-  </head>
-  <body>
-    <img id="sample-image" src="example.jpg" />
+    <meta charset='utf-8' />
+    <title>Annotorious OpenSeadragon | Boolean Plugin</title>
+    <style>
+      html, body, #openseadragon {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+      }
 
-    <div>
-      <button id="tool">Rectangle</button>
-      <button id="merge">Merge</button>
-      <button id="subtract">Subtract</button>
+      .openseadragon-canvas {
+        outline: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="openseadragon">
+      <div class="buttons" style="position:absolute; top: 10px; right: 10px; z-index: 1;">
+        <button id="move-or-draw">Move</button>
+        <button id="tool">Rectangle</button>
+        <button id="merge">Merge</button>
+        <button id="subtract">Subtract</button>
+      </div>
     </div>
 
-    <script type="module">
-      import { createImageAnnotator } from '@annotorious/annotorious';
+    <script type='module'>
+      import OpenSeadragon from 'openseadragon';
+      import { createOSDAnnotator } from '@annotorious/openseadragon';
       import { mountPlugin as mountToolsPlugin } from '@annotorious/plugin-tools';
       import { mountPlugin as mountBooleanPlugin } from '../src';
 
-      import '@annotorious/annotorious/annotorious.css';
+      import '@annotorious/openseadragon/annotorious-openseadragon.css';
 
-      let state = 'Start';
+      window.onload = function() {
+        var viewer = OpenSeadragon({
+          id: 'openseadragon',
+          prefixUrl: 'https://cdn.jsdelivr.net/npm/openseadragon@3.1/build/openseadragon/images/', 
+          crossOriginPolicy: 'Anonymous',
+          gestureSettingsMouse: {
+            clickToZoom: false
+          },
+          gestureSettingsTouch: {
+            pinchRotate: true
+          },
+          showRotationControl: true,
+          tileSources: {
+            '@context' : 'http://iiif.io/api/image/2/context.json',
+            protocol : 'http://iiif.io/api/image',
+            width : 7808,
+            height : 5941,
+            sizes : [
+              { width : 244, height : 185 },
+              { width : 488, height : 371 },
+              { width : 976, height : 742 }
+            ],
+            tiles : [
+              { width : 256, height : 256, scaleFactors : [ 1, 2, 4, 8, 16, 32 ] }
+            ],
+            '@id' : 'https://iiif.bodleian.ox.ac.uk/iiif/image/af315e66-6a85-445b-9e26-012f729fc49c',
+            profile : [
+              'http://iiif.io/api/image/2/level2.json',
+              { formats : [ 'jpg', 'png', 'webp' ],
+                qualities : ['native','color','gray','bitonal'],
+                supports : ['regionByPct','regionSquare','sizeByForcedWh','sizeByWh','sizeAboveFull','sizeUpscaling','rotationBy90s','mirroring'],
+                maxWidth : 1000,
+                maxHeight : 1000
+              }
+            ]
+          }
+        });
 
-      window.onload = () => {
-        const anno = createImageAnnotator(document.getElementById('sample-image'));
+        const style = function(a, state) {
+          const { hovered, selected } = state || {};
+          return {
+            fill: hovered ? 'rgba(200,0,60,0.40)' : 'rgba(200,0,60,0.5)',
+            stroke: '#ff0000', 
+            strokeOpacity: 0.9,
+            strokeWidth: 1
+          }
+        };
+
+        var anno = createOSDAnnotator(viewer, {
+          autoSave: true,
+          drawingEnabled: false,
+          drawingMode: 'drag',
+          multiSelect: true,
+          style
+        });
 
         mountToolsPlugin(anno);
         const plugin = mountBooleanPlugin(anno);
+
+        anno.loadAnnotations('osd-annotations.json');
+
+        const trigger = document.getElementById('move-or-draw');
+        trigger.addEventListener('click', function() {
+          if (trigger.innerHTML == 'Move') {
+            anno.setDrawingEnabled(true);
+            trigger.innerHTML = 'Draw';
+          } else {
+            anno.setDrawingEnabled(false);
+            trigger.innerHTML = 'Move';
+          }
+        });
 
         const toolBtn = document.getElementById('tool');
         toolBtn.addEventListener('click', () => {
@@ -43,12 +122,21 @@
         });
 
         document.getElementById('merge').addEventListener('click', () => {
-          plugin.merge();
+          plugin.mergeSelected();
         });
 
         document.getElementById('subtract').addEventListener('click', () => {
-          plugin.subtract();
+          plugin.subtractSelected();
         });
+
+        anno.on('createAnnotation', a => {
+          console.log('created', a);
+          trigger.innerHTML = 'Move';
+          anno.setDrawingEnabled(false);
+        });
+
+        anno.on('deleteAnnotation', a => console.log('deleted', a));
+        anno.on('updateAnnotation', (a, previous) => console.log('updated', previous, 'with', a));
       }
     </script>
   </body>

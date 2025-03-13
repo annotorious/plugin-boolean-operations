@@ -8,50 +8,62 @@ import type {
 
 export const mountPlugin = (anno: ImageAnnotator) => {
 
-  // Just for testing
-  const merge = () => {
-    const all = anno.getAnnotations();
+  const { store, selection } = anno.state;
 
-    const input = all.map(toPolyclip) as Geom;
+  const getSelected = () => {
+    const selectedIds = selection.selected.map(s => s.id);
+    return selectedIds.map(id => store.getAnnotation(id)!).filter(Boolean);
+  }
+
+  const mergeSelected = () => {
+    const [first, ...others] = getSelected();
+    if (!first || others.length === 0) return;
+
+    const input = [first, ...others].map(toPolyclip) as Geom;
+
     const merged = polyclip.union(input);
     const selector = toSelector(merged);
 
-    all.forEach(a => anno.removeAnnotation(a.id));
-
-    const annotation = {
-      ...all[0],
+    const annotation: ImageAnnotation = {
+      ...first,
       target: {
-        ...all[0].target,
+        ...first.target,
         selector
       }
-    } as ImageAnnotation;
+    };
 
-    anno.addAnnotation(annotation);
+    // Update first annotation
+    store.updateAnnotation(annotation);
+
+    // Delete others
+    store.bulkDeleteAnnotation(others);
   }
 
-  const subtract = () => {
-    const all = anno.getAnnotations();
+  const subtractSelected = () => {
+    const [first, ...others] = getSelected();
+    
+    if (!first || others.length === 0) return;
 
-    const input = all.map(toPolyclip);
+    const input = [first, ...others].map(toPolyclip);
+    
     const diff = polyclip.difference(input[0], input[1]);
     const selector = toSelector(diff);
 
-    all.forEach(a => anno.removeAnnotation(a.id));
-
-    const annotation = {
-      ...all[0],
+    const annotation: ImageAnnotation = {
+      ...first,
       target: {
-        ...all[0].target,
+        ...first.target,
         selector
       }
-    } as ImageAnnotation;
+    };
 
-    anno.addAnnotation(annotation);
+    store.updateAnnotation(annotation);
+    store.bulkDeleteAnnotation(others);
   }
 
   return {
-    merge,
-    subtract
+    mergeSelected,
+    subtractSelected
   }
 
 }

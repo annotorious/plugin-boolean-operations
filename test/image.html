@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Annotorious Boolean Operations</title>
+  </head>
+  <body>
+    <img id="sample-image" src="example.jpg" />
+
+    <div>
+      <button id="tool">Rectangle</button>
+      <button id="merge">Merge</button>
+      <button id="subtract">Subtract</button>
+    </div>
+
+    <script type="module">
+      import { createImageAnnotator } from '@annotorious/annotorious';
+      import { mountPlugin as mountToolsPlugin } from '@annotorious/plugin-tools';
+      import { mountPlugin as mountBooleanPlugin } from '../src';
+
+      import '@annotorious/annotorious/annotorious.css';
+
+      let state = 'Start';
+
+      window.onload = () => {
+        const anno = createImageAnnotator(document.getElementById('sample-image'));
+
+        mountToolsPlugin(anno);
+        const plugin = mountBooleanPlugin(anno);
+
+        const toolBtn = document.getElementById('tool');
+        toolBtn.addEventListener('click', () => {
+          if (toolBtn.innerHTML === 'Rectangle') {
+            toolBtn.innerHTML = 'Polygon';
+            anno.setDrawingTool('polygon');
+          } else if (toolBtn.innerHTML === 'Polygon') {
+            toolBtn.innerHTML = 'Ellipse';
+            anno.setDrawingTool('ellipse');
+          } else if (toolBtn.innerHTML === 'Ellipse') {
+            toolBtn.innerHTML = 'Rectangle';
+            anno.setDrawingTool('rectangle');
+          }
+        });
+
+        document.getElementById('merge').addEventListener('click', () => {
+          plugin.merge();
+        });
+
+        document.getElementById('subtract').addEventListener('click', () => {
+          plugin.subtract();
+        });
+      }
+    </script>
+  </body>
+</html>
