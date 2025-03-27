@@ -1,6 +1,6 @@
 {
   "name": "@annotorious/plugin-boolean-operations",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Adds functionality to merge and subtract annotation shapes",
   "author": "Rainer Simon",
   "license": "BSD-3-Clause",
