@@ -36,7 +36,7 @@ export const mountPlugin = (anno: ImageAnnotator) => {
     store.updateAnnotation(annotation);
 
     // Delete others
-    store.bulkDeleteAnnotation(others);
+    store.bulkDeleteAnnotations(others);
   }
 
   const subtractSelected = () => {
@@ -58,7 +58,7 @@ export const mountPlugin = (anno: ImageAnnotator) => {
     };
 
     store.updateAnnotation(annotation);
-    store.bulkDeleteAnnotation(others);
+    store.bulkDeleteAnnotations(others);
   }
 
   return {
