@@ -19,9 +19,10 @@ export const mountPlugin = (anno: ImageAnnotator) => {
     const [first, ...others] = getSelected();
     if (!first || others.length === 0) return;
 
-    const input = [first, ...others].map(toPolyclip) as Geom;
-
-    const merged = polyclip.union(input);
+    const input = [first, ...others].map(toPolyclip) as Geom[];
+    const [firstInput, ...otherInput] = input;
+    const merged = polyclip.union(firstInput, ...otherInput);
+    
     const selector = toSelector(merged);
 
     const annotation: ImageAnnotation = {
@@ -40,13 +41,15 @@ export const mountPlugin = (anno: ImageAnnotator) => {
   }
 
   const subtractSelected = () => {
-    const [first, ...others] = getSelected();
+    const selected = getSelected();
     
-    if (!first || others.length === 0) return;
+    if ((selected || []).length < 2) return;
+    
+    const [first, ...others] = selected;
+    const input =  [first, ...others].map(toPolyclip) as Geom[];
+    const [firstInput, ...otherInput] = input;
+    const diff = polyclip.difference(firstInput, ...otherInput);
 
-    const input = [first, ...others].map(toPolyclip);
-    
-    const diff = polyclip.difference(input[0], input[1]);
     const selector = toSelector(diff);
 
     const annotation: ImageAnnotation = {

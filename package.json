@@ -32,10 +32,10 @@
   "devDependencies": {
     "@annotorious/openseadragon": "^3.3.3",
     "@annotorious/plugin-tools": "^1.0.2",
-    "@types/node": "^22.13.14",
+    "@types/node": "^22.14.1",
     "openseadragon": "^5.0.1",
-    "typescript": "^5.8.2",
-    "vite": "^6.2.3",
+    "typescript": "^5.8.3",
+    "vite": "^6.2.6",
     "vite-plugin-dts": "^4.5.3"
   },
   "peerDependencies": {
