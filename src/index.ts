@@ -40,17 +40,38 @@ export const mountPlugin = (anno: ImageAnnotator) => {
     store.bulkDeleteAnnotations(others);
   }
 
+  const subtract = (annotations: ImageAnnotation[]) => {
+    const [first, ...others] = annotations;
+    const input =  [first, ...others].map(toPolyclip) as Geom[];
+    const [firstInput, ...otherInput] = input;
+    return polyclip.difference(firstInput, ...otherInput);
+  }
+
+  const canSubtractSelected = () => {
+    const selected = getSelected();
+    
+    // Less than 2 shapes selected
+    if ((selected || []).length < 2) return false;
+
+    const diff = subtract(selected);
+    return diff.length > 0;
+  }
+
   const subtractSelected = () => {
     const selected = getSelected();
     
     if ((selected || []).length < 2) return;
-    
-    const [first, ...others] = selected;
-    const input =  [first, ...others].map(toPolyclip) as Geom[];
-    const [firstInput, ...otherInput] = input;
-    const diff = polyclip.difference(firstInput, ...otherInput);
+
+    const diff = subtract(selected);
+
+    if (diff.length === 0) {
+      console.warn('Cannot subtract: result empty');
+      return;
+    }
 
     const selector = toSelector(diff);
+    
+    const [first, ...others] = selected;
 
     const annotation: ImageAnnotation = {
       ...first,
@@ -65,6 +86,7 @@ export const mountPlugin = (anno: ImageAnnotator) => {
   }
 
   return {
+    canSubtractSelected,
     mergeSelected,
     subtractSelected
   }
