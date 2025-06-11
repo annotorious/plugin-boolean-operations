@@ -30,16 +30,16 @@
     }
   },
   "devDependencies": {
-    "@annotorious/openseadragon": "^3.3.6",
-    "@annotorious/plugin-tools": "^1.0.2",
-    "@types/node": "^22.15.17",
+    "@annotorious/openseadragon": "^3.4.5",
+    "@annotorious/plugin-tools": "^1.1.0",
+    "@types/node": "^24.0.0",
     "openseadragon": "^5.0.1",
     "typescript": "^5.8.3",
     "vite": "^6.3.5",
-    "vite-plugin-dts": "^4.5.3"
+    "vite-plugin-dts": "^4.5.4"
   },
   "peerDependencies": {
-    "@annotorious/annotorious": "^3.3.6"
+    "@annotorious/annotorious": "^3.4.5"
   },
   "dependencies": {
     "polyclip-ts": "^0.16.8",
