@@ -1,10 +1,8 @@
 import * as polyclip from 'polyclip-ts';
 import type { Geom } from 'polyclip-ts';
+import type { ImageAnnotation, ImageAnnotator } from '@annotorious/annotorious';
 import { toPolyclip, toSelector } from './utils';
-import type { 
-  ImageAnnotation, 
-  ImageAnnotator
-} from '@annotorious/annotorious';
+import type { MergeOptions } from './types';
 
 export const mountPlugin = (anno: ImageAnnotator) => {
 
@@ -15,18 +13,24 @@ export const mountPlugin = (anno: ImageAnnotator) => {
     return selectedIds.map(id => store.getAnnotation(id)!).filter(Boolean);
   }
 
-  const mergeSelected = () => {
+  const mergeSelected = (options: MergeOptions = { strategy: 'merge_bodies' }) => {
     const [first, ...others] = getSelected();
     if (!first || others.length === 0) return;
 
-    const input = [first, ...others].map(toPolyclip) as Geom[];
-    const [firstInput, ...otherInput] = input;
-    const merged = polyclip.union(firstInput, ...otherInput);
+    const inputGeoms = [first, ...others].map(toPolyclip) as Geom[];
+    const [firstInputGeom, ...otherInputGeoms] = inputGeoms;
+    const mergedGeom = polyclip.union(firstInputGeom, ...otherInputGeoms);
     
-    const selector = toSelector(merged);
+    const selector = toSelector(mergedGeom);
+
+    const bodies = 
+      'bodies' in options ? [...options.bodies] :
+      options.strategy === 'keep_first_bodies' ? [...first.bodies] :
+      [first, ...others].flatMap(a => a.bodies);
 
     const annotation: ImageAnnotation = {
       ...first,
+      bodies,
       target: {
         ...first.target,
         selector
