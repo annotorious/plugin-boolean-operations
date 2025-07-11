@@ -30,7 +30,7 @@
     }
   },
   "devDependencies": {
-    "@annotorious/openseadragon": "^3.6.2",
+    "@annotorious/openseadragon": "^3.6.3",
     "@annotorious/plugin-tools": "^1.4.0",
     "@types/node": "^24.0.13",
     "openseadragon": "^5.0.1",
@@ -39,7 +39,7 @@
     "vite-plugin-dts": "^4.5.4"
   },
   "peerDependencies": {
-    "@annotorious/annotorious": "^3.6.2"
+    "@annotorious/annotorious": "^3.6.3"
   },
   "dependencies": {
     "polyclip-ts": "^0.16.8",
