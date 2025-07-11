@@ -1,6 +1,6 @@
 import * as polyclip from 'polyclip-ts';
 import type { Geom } from 'polyclip-ts';
-import type { Annotation, AnnotationBody, ImageAnnotation, ImageAnnotator } from '@annotorious/annotorious';
+import type { AnnotationBody, ImageAnnotation, ImageAnnotator } from '@annotorious/annotorious';
 import { toPolyclip, toSelector } from './utils';
 import type { MergeOptions } from './types';
 

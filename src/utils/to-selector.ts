@@ -31,7 +31,7 @@ export const toSelector = (multipoly: [number, number][][][]) => {
   }, []);
 
   const multi = {
-    type: ShapeType.MULTIPOLYGLON,
+    type: ShapeType.MULTIPOLYGON,
     geometry: {
       polygons: multipoly.map(polygon => ({
         // Note that polyclip-ts always duplicates the starting point–remove

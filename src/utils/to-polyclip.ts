@@ -1,10 +1,11 @@
 import type { Geom } from 'polyclip-ts';
-import { ShapeType } from '@annotorious/annotorious';
+import { approximateAsPolygon, ShapeType } from '@annotorious/annotorious';
 import type { 
   EllipseGeometry, 
   ImageAnnotation, 
   MultiPolygonGeometry, 
   PolygonGeometry, 
+  PolylineGeometry, 
   RectangleGeometry 
 } from '@annotorious/annotorious';
 
@@ -28,6 +29,20 @@ const ellipseToPolygon = (
   return [[...points, points[0]]];
 }
 
+const multiPolygonToPolygon = (
+  multi: MultiPolygonGeometry
+): [number, number][][][] =>
+  multi.polygons.map(element => 
+    element.rings.map(ring => ring.points)
+  );
+
+const polylineToPolygon = (
+  geom: PolylineGeometry
+): [number, number][][] => {
+  const points = approximateAsPolygon(geom.points, geom.closed);
+  return [points as [number, number][]];
+}
+
 const rectToPolygon = (
   rect: RectangleGeometry
 ): [number, number][][] => ([[
@@ -38,23 +53,21 @@ const rectToPolygon = (
   [rect.x, rect.y]
 ]]);
 
-const multiPolygonToPolygon = (
-  multi: MultiPolygonGeometry
-): [number, number][][][] =>
-  multi.polygons.map(element => 
-    element.rings.map(ring => ring.points)
-  );
-
 /** Returns a polyclip polygon or multipolygon **/
 export const toPolyclip = (annotation: ImageAnnotation): Geom => {
   const { selector } = annotation.target;
-  if (selector.type === ShapeType.RECTANGLE) {
-    return rectToPolygon(selector.geometry as RectangleGeometry);
+
+  if (selector.type === ShapeType.ELLIPSE) {
+    return ellipseToPolygon(selector.geometry as EllipseGeometry);
+  } else if (selector.type === ShapeType.MULTIPOLYGON) {
+    return multiPolygonToPolygon(selector.geometry as MultiPolygonGeometry);
   } else if (selector.type === ShapeType.POLYGON) {
     return [(selector.geometry as PolygonGeometry).points as [number, number][]];
-  } else if (selector.type === ShapeType.ELLIPSE) {
-    return ellipseToPolygon(selector.geometry as EllipseGeometry);
-  } else if (selector.type === ShapeType.MULTIPOLYGLON) {
-    return multiPolygonToPolygon(selector.geometry as MultiPolygonGeometry);
+  } else if (selector.type === ShapeType.POLYLINE) {
+    return polylineToPolygon(selector.geometry as PolylineGeometry);
+  } else if (selector.type === ShapeType.RECTANGLE) {
+    return rectToPolygon(selector.geometry as RectangleGeometry);
+  } else {
+    console.warn(`[plugin-boolean-operations] Unsupported shape type: ${selector.type}`);
   }
 }
